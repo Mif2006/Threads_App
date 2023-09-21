@@ -29,7 +29,7 @@ function PostThread({ userId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // const { organization } = useOrganization();
+  const { organization } = useOrganization();
 
   
 
@@ -55,34 +55,36 @@ function PostThread({ userId }: Props) {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    
     
     await createThread({
       text: formData.thread,
       author: userId,  
-      communityId: null,
+      communityId: organization ? organization.id : null,
       path: pathname
     });
 
     router.push("/")
   }
 
-  const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
-    console.log("hey")
-    try {
-      await createThread({
-        text: values.thread,
-        author: userId,
-        communityId: null,
-        path: pathname,
-      });
-      console.log('success')
+  // const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
+  //   console.log("hey")
+  //   try {
+  //     await createThread({
+  //       text: values.thread,
+  //       author: userId,
+  //       communityId: null,
+  //       path: pathname,
+  //     });
+  //     console.log('success')
   
-      router.push("/");
-    } catch (error) {
-      console.log("Bad Error")
-    }
+  //     router.push("/");
+  //   } catch (error) {
+  //     console.log("Bad Error")
+  //   }
     
-  };
+  // };
 
   return (
     // <Form {...form}>
