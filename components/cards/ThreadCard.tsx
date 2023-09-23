@@ -1,14 +1,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { currentUser } from "@clerk/nextjs";
-import Liker from "./Liker";
 import { formatDateString } from "@/lib/utils";
+import { likeThread } from "@/lib/actions/thread.actions";
+import Liker from "./Liker";
 
 
 interface Props {
     id: string | null;
     currentUserId: string;
+    myUserId?: string;
     parentId: string;
     content: string;
     author: {
@@ -27,15 +28,17 @@ interface Props {
             image: string;
         }
     }[];
-    likes?: {}
     threadId?: string;
     isComment?:boolean;
+    myLiked?:boolean | undefined;
+    totalLikes:number
 }
 
 
-const ThreadCard = async ({
+const ThreadCard =  ({
 id,
 currentUserId,
+myUserId,
 parentId,
 content,
 author,
@@ -43,9 +46,13 @@ community,
 createdAt,
 comments,
 isComment,
+myLiked,
+totalLikes
 }: Props) => {
-const user = await currentUser()
 
+
+
+    
     return (
         <article className={`flex w-full flex-col rounded-xl ${isComment ? 'px-0 xs:px-7' : 'bg-dark-2 p-7'}`}>
             <div className="flex items-start justify-between">
@@ -73,9 +80,11 @@ const user = await currentUser()
                         <div className={` ${isComment && 'mb-10'} mt-5 flex flex-col gap-3 `}>
                             <div className="flex gap-3.5">
                               
-                                <Image className="cursor-pointer object-contain" src="/assets/heart-gray.svg" alt="heart" width={24} height={24} />
-                               {/* <Liker id={id} user={user?.id}/> */}
-
+                                {/* <Image  className="cursor-pointer object-contain" src="/assets/heart-gray.svg" alt="heart" width={24} height={24} /> */}
+                                
+                                {myUserId && id &&
+                                <Liker threadId={id} userId={myUserId} liked={myLiked} totalLikes={totalLikes} /> }
+                             
                                 <Link href={`/thread/${id}`}>
                                 <Image className="cursor-pointer object-contain" src="/assets/reply.svg" alt="reply" width={24} height={24} />
                                 </Link>

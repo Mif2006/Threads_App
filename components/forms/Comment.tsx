@@ -21,7 +21,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
 import { CommentValidation } from "@/lib/validations/thread";
-import { addCommentToThread } from "@/lib/actions/thread.actions";
+import { addCommentToThread, likeThread } from "@/lib/actions/thread.actions";
 
 interface Props {
   threadId: string;
@@ -50,6 +50,7 @@ function Comment({ threadId, currentUserImg, currentUserId } : Props) {
     }
   }
 
+
   return (
     <form className='comment-form' onSubmit={handleSubmit}>
       <div className="flex w-full items-center gap-3">
@@ -70,9 +71,9 @@ function Comment({ threadId, currentUserImg, currentUserId } : Props) {
         />
         </div>
       </div>
-
       <button className='comment-form_btn' type="submit">Reply</button>
     </form>
+
   );
 }
 

@@ -1,5 +1,6 @@
 import ThreadCard from "@/components/cards/ThreadCard";
-import { fetchPosts } from "@/lib/actions/thread.actions";
+import { fetchPosts, hasLiked, returnLikes } from "@/lib/actions/thread.actions";
+import { fetchUser } from "@/lib/actions/user.actions";
 import { UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -9,11 +10,15 @@ export default async function Home() {
    const result = await fetchPosts(1, 30);
    const user = await currentUser()
     if (!user) redirect('/sign-in')
-    if(!user) return null
 
-    
+    const userInfo = await fetchUser(user.id)
 
-   console.log(result)
+    // const totalLikes = await returnLikes(thread.id, userInfo._id)
+    const totalLikesPromises = result.posts.map((post) => returnLikes(post.id, userInfo._id))
+    const totalLikesData = await Promise.all(totalLikesPromises)
+
+    const isLikedPromises = result.posts.map((post) => hasLiked(post.id, userInfo._id));
+  const isLikedData = await Promise.all(isLikedPromises);
 
   return (
     <>
@@ -24,19 +29,25 @@ export default async function Home() {
             <p className="no-result">No threads found</p>
         ) : (
           <>
-            {result.posts.map((post) => (
+            {result.posts.map((post, index) => {
+         
+            return (
+             
               <ThreadCard
                 key={post.id}
                 id={post.id}
                 currentUserId={user?.id || ""}
+                myUserId={userInfo._id}
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}
                 community={post.community}
                 createdAt={post.createdAt}
                 comments={post.children}
+                myLiked={isLikedData[index]}
+                totalLikes={totalLikesData[index]}
               />
-            ))}
+            )})}
           </>
         )}
       </section>
