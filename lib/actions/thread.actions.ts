@@ -239,7 +239,7 @@ export async function addCommentToThread(
   }
 }
 
-export async function likeThread(threadId: string, userId: string) {
+export async function likeThread(threadId: string, userId: string, path: string) {
 
 // const userId = "6506be527d2a79bfb51a5bae"
   try {
@@ -261,6 +261,8 @@ export async function likeThread(threadId: string, userId: string) {
 
     // Save the updated thread with the new like
     await thread.save();
+
+    revalidatePath(path);
 
   } catch (error: any) {
 
@@ -306,3 +308,32 @@ export async function returnLikes (threadId: string, userId: string) {
     console.log(error)
   }
 }
+
+export async function removeLike(threadId: string, userId: string, path: string) {
+  try {
+    connectToDB();
+
+    const thread = await Thread.findById(threadId);
+
+    if (!thread) {
+      throw new Error("Thread not found");
+    }
+
+    // Check if the user has already liked the thread
+    const userIndex = thread.likes.indexOf(userId);
+    if (userIndex === -1) {
+      throw new Error("User has not liked this thread");
+    }
+
+    // Remove the user from the likes array
+    thread.likes.splice(userIndex, 1);
+
+    // Save the updated thread with the like removed
+    await thread.save();
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+  }
+}
+

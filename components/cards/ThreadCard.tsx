@@ -4,6 +4,7 @@ import Link from "next/link";
 import { formatDateString } from "@/lib/utils";
 import { likeThread } from "@/lib/actions/thread.actions";
 import Liker from "./Liker";
+import Deleter from "./Deleter";
 
 
 interface Props {
@@ -31,7 +32,7 @@ interface Props {
     threadId?: string;
     isComment?:boolean;
     myLiked?:boolean | undefined;
-    totalLikes:number
+    totalLikes?:number
 }
 
 
@@ -83,7 +84,7 @@ totalLikes
                                 {/* <Image  className="cursor-pointer object-contain" src="/assets/heart-gray.svg" alt="heart" width={24} height={24} /> */}
                                 
                                 {myUserId && id &&
-                                <Liker threadId={id} userId={myUserId} liked={myLiked} totalLikes={totalLikes} /> }
+                                <Liker threadId={id} userId={myUserId} liked={myLiked} /> }
                              
                                 <Link href={`/thread/${id}`}>
                                 <Image className="cursor-pointer object-contain" src="/assets/reply.svg" alt="reply" width={24} height={24} />
@@ -100,6 +101,7 @@ totalLikes
                             )}
                         </div>
                      </div>
+                  <Deleter threadId={id} />
                 </div>
 
                 {/* Delete Thread */}
